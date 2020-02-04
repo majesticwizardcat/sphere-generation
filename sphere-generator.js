@@ -313,15 +313,15 @@ class Sphere {
 		let speed = delta * delta;
 
 		let rotation = mat4.create();
-		mat4.rotateZ(rotation, rotation, speed / 1.5 + delta);
+		mat4.rotateZ(rotation, rotation, speed / 1.2 + 1.13 * delta);
 		mat4.multiply(this.objectToWorld, this.objectToWorld, rotation);
 
 		rotation = mat4.create();
-		mat4.rotateX(rotation, rotation, speed + 0.73 * delta);
+		mat4.rotateX(rotation, rotation, speed + 1.3 * delta);
 		mat4.multiply(this.objectToWorld, this.objectToWorld, rotation);
 
 		rotation = mat4.create();
-		mat4.rotateY(rotation, rotation, speed / 2 + 1.35 * delta);
+		mat4.rotateY(rotation, rotation, speed / 1.7 + 1.135 * delta);
 		mat4.multiply(this.objectToWorld, this.objectToWorld, rotation);
 	}
 
