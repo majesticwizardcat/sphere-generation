@@ -1,5 +1,3 @@
-const QUALITY = 2;
-
 const pass = `
 	precision mediump float;
 
@@ -379,11 +377,10 @@ function main() {
 	cameraUp[1] = 1.0;
 	cameraUp[2] = 0.0;
 
-	let sphere = new Sphere(Math.pow(2, QUALITY + 1));
 	let camera = new Camera(cameraPosition, cameraLookAt, cameraUp,
 		resolutionWidth, resolutionHeight, Math.PI / 2, 0.01, 1000.0);
 
-	render(sphere, camera);
+	render(camera);
 }
 
 function setupGL() {
@@ -394,13 +391,36 @@ function setupGL() {
 	GL.clearDepth(1.0);
 }
 
-function render(sphere, camera) {
+function render(camera) {
+	let quality = 3;
+	let sphere = new Sphere(Math.pow(2, quality));
 	let timeNow = Date.now();
 	let timePrev = timeNow;
 	let delta = 0.0;
 	let cameraMoveDirection = vec3.create();
+	let updateSphere = false;
+
+	document.addEventListener('keyup', (e) => {
+		if (e.code === "ArrowUp") {
+			quality++;
+		}
+		else if (e.code === "ArrowDown") {
+			quality--;
+		}
+
+		quality = Math.max(quality, 2);
+		updateSphere = true;;
+	});
 
 	function draw() {
+		if (updateSphere) {
+			sphere = new Sphere(Math.pow(2, quality));
+			timeNow = Date.now();
+			timePrev = timeNow;
+			delta = 0.0;
+			updateSphere = false;
+		}
+
 		timeNow = Date.now();
 		delta = (timeNow - timePrev) / 1000.0;
 		timePrev = timeNow;
