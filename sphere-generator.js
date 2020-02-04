@@ -141,9 +141,11 @@ class Vertex {
 	}
 }
 
+const shader = new Shader(pass, directional);
+
 class Sphere {
 	constructor(circles) {
-		this.shader = new Shader(pass, directional);
+		this.shader = shader;
 		this.objectToWorld = mat4.create();
 		this.objectToWorldIT = mat4.create();
 		this.circles = circles;
@@ -348,6 +350,13 @@ class Sphere {
 			this.objectToWorldIT);
 
 		GL.drawElements(GL.TRIANGLES, this.indices, GL.UNSIGNED_SHORT, 0);
+		GL.bindBuffer(GL.ARRAY_BUFFER, null);
+		GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, null);
+	}
+
+	dispose() {
+		GL.deleteBuffer(this.vertexBuffer);
+		GL.deleteBuffer(this.indexBuffer);
 	}
 }
 
@@ -414,6 +423,7 @@ function render(camera) {
 
 	function draw() {
 		if (updateSphere) {
+			sphere.dispose();
 			sphere = new Sphere(Math.pow(2, quality));
 			timeNow = Date.now();
 			timePrev = timeNow;
