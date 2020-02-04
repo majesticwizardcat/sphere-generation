@@ -10,11 +10,14 @@ const pass = `
 	uniform mat4 worldToCamera;
 	uniform mat4 projection;
 
+	varying lowp vec3 vPosition;
 	varying lowp vec2 vUv;
 	varying lowp vec3 vNormal;
 
 	void main() {
-		vec4 pos = (projection * worldToCamera * objectToWorld) * position;
+		vec4 pos = objectToWorld * position;
+		vPosition = (pos / pos.w).xyz;
+		pos = projection * worldToCamera * pos;
 		pos /= pos.w;
 		vNormal = normalize((objectToWorldInvrsTrnsp * vec4(normal, 0.0)).xyz);
 		vUv = uv;
@@ -22,20 +25,23 @@ const pass = `
 	}
 `;
 
-const directional = `
+const point = `
 	precision lowp float;
 
-	const vec3 lightDirection = normalize(vec3(-1.0, -1.5, -1.5));
-	const float intensity = 13.5;
+	const vec3 lightLocation = vec3(0.0, 1.5, 3.5);
+	const float intensity = 33.5;
 
+	varying lowp vec3 vPosition;
 	varying lowp vec2 vUv;
 	varying lowp vec3 vNormal;
 
 	void main() {
+		vec3 lightDirection = normalize(lightLocation - vPosition);
 		float r = vUv.x;
 		float g = (1.0 - vUv.x) * vUv.y;
 		float b = 1.0 - r - g;
-		float ints = dot(vNormal, -lightDirection) * intensity / 3.14;
+		float dist = distance(lightLocation, vPosition);
+		float ints = (dot(vNormal, lightDirection) * intensity) / (3.14 * dist * dist);
 		gl_FragColor = vec4(vec3(r * ints, g * ints, b * ints), 1.0);
 	}
 `;
@@ -141,7 +147,7 @@ class Vertex {
 	}
 }
 
-const shader = new Shader(pass, directional);
+const shader = new Shader(pass, point);
 
 class Sphere {
 	constructor(circles) {
