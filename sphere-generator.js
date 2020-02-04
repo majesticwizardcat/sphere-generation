@@ -1,3 +1,5 @@
+const QUALITY = 2;
+
 const pass = `
 	precision mediump float;
 
@@ -377,7 +379,7 @@ function main() {
 	cameraUp[1] = 1.0;
 	cameraUp[2] = 0.0;
 
-	let sphere = new Sphere(64);
+	let sphere = new Sphere(Math.pow(2, QUALITY + 1));
 	let camera = new Camera(cameraPosition, cameraLookAt, cameraUp,
 		resolutionWidth, resolutionHeight, Math.PI / 2, 0.01, 1000.0);
 
